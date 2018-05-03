@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <title>Binary Division Experiments</title>
+        <script src="binary-division.js" type="text/javascript"></script>
+        <script type="text/javascript">
+
+            function el(tag, innerHTML, id){
+                var div = document.createElement(tag);
+                if(id) div.id = id;
+                if(!Array.isArray(innerHTML)){
+                    innerHTML = [innerHTML];
+                }
+                if(Array.isArray(innerHTML)){
+                    for(var i = 0; i < innerHTML.length; i++){
+                        if(typeof innerHTML[i] != "object"){
+                            div.innerHTML += innerHTML[i];
+                        }
+                        if(typeof innerHTML[i] == "object"){
+                            try{
+                                div.appendChild(innerHTML[i]);
+                            }catch(err){
+                                log(err);
+                            }
+                        }
+                    }
+                }
+                return div;
+            }
+            
+            var number = 1024;
+            var bin = "10";
+            var div = 124;
+            var divide = new BinaryDivision(bin);
+
+            var result1 = divide.divide(number);
+            var input1 = el("input", "", "binary-code");
+            input1.value = bin;
+            input1.addEventListener('change', function(){
+                document.getElementById('result1').innerHTML = (new BinaryDivision(input1.value)).divide(number);
+            })
+            var result2 = divide.find(number, div);
+            var input2 = el("input", "", "division");
+            input2.value = div;
+            input2.addEventListener('change', function(){
+                document.getElementById('result2').innerHTML = (new BinaryDivision()).find(number, parseInt(input2.value));
+            })
+
+            input1.style.display = input2.style.display = "block";
+
+            var output = el("div", [
+                el("div", [
+                    "The resulting position between 0 and "+number+" using the binary code below is: ",
+                    el("span", result1, "result1"),
+                    input1
+                ]),
+                el("div", [
+                    "The resulting binary code to find the number below between 0 and "+number+" is: ",
+                    el("span", result2, "result2"),
+                    input2
+                ])
+            ]);
+
+            var divisions = 10;
+            var result3 = null;
+
+            function onLoad(){
+                document.body.appendChild(output);
+            }
+
+            window.addEventListener('load', onLoad);
+        </script>
+    </head>
+    <body></body>
+</html>

@@ -1,0 +1,160 @@
+<html>
+    <head>
+        <title>RGB Clock</title>
+        <script type="text/javascript">
+        var query = location.search.substring(1).split("&").reduce(function(prev, curr, i, arr) {
+            var p = curr.split("=");
+            prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
+            return prev;
+        }, {});
+
+        var MAX_DEPTH = 10;
+        var WIDTH = 800;
+        var clock = {
+            hours: [2,4,3, 5],
+            minutes: [2,2,3, 5],
+            seconds: [2,2,3, 5]
+        };
+        var MAX_DEPTH = Math.max(clock.hours.length, Math.max(clock.minutes.length, clock.seconds.length));
+        var animate = true;
+        var invert = !!query.invert;   
+        
+        
+
+        function multiply(a,b){
+            return a * b;
+        }
+        function newCanvas(width, height, background_color){
+            width = Math.abs(width);
+            height = Math.abs(height);
+            var canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            if(typeof background_color == "string"){
+                var context = canvas.getContext('2d');
+                context.fillStyle = background_color;
+                context.fillRect(0,0, width, height);
+            }
+            return canvas;
+        }
+        var squareCircle = newCanvas(WIDTH, WIDTH, "white");
+        var style = {
+            "position": "absolute",
+            "top": "50%",
+            "left": "50%",
+            "margin-left": (-WIDTH/2)+"px",
+            "margin-top": (-WIDTH/2)+"px"
+        };
+        Object.assign(squareCircle.style, style);
+
+        (function(){
+            var annulus = function(centerX, centerY,
+                                innerRadius, outerRadius,
+                                startAngle, endAngle,
+                                anticlockwise) {
+            var th1 = startAngle*Math.PI/180;
+            var th2 = endAngle*Math.PI/180;
+            var startOfOuterArcX = outerRadius*Math.cos(th2) + centerX;
+            var startOfOuterArcY = outerRadius*Math.sin(th2) + centerY;
+
+            this.beginPath();
+            this.arc(centerX, centerY, innerRadius, th1, th2, anticlockwise);
+            this.lineTo(startOfOuterArcX, startOfOuterArcY);
+            this.arc(centerX, centerY, outerRadius, th2, th1, !anticlockwise);
+            this.closePath();
+            }
+            CanvasRenderingContext2D.prototype.annulus = annulus;
+        })();
+
+        function draw_clock(hours, minutes, seconds, start_animation){
+            if(start_animation){
+                animate = true;
+            }
+            var dt = new Date();
+            var millisecs = dt.getMilliseconds() + (1000 * (dt.getSeconds() + (60 * (dt.getMinutes() + (60 * dt.getHours())))));
+            var time = millisecs/(86400*1000);
+            var r = WIDTH/2-10;
+            var x = WIDTH/2;
+            var y = WIDTH/2;
+            var context = squareCircle.getContext('2d');
+            context.strokeStyle = "hsl(0,0%,50%)";
+            context.fillStyle = "hsl(0,100%,50%)";
+            function drawLine(angle, start_distance, end_distance){
+                var lx = x + r * Math.cos(-angle*Math.PI/180) * start_distance;
+                var ly = y + r * Math.sin(-angle*Math.PI/180) * start_distance;
+
+                var lx2 = x + r * Math.cos(-angle*Math.PI/180) * end_distance;
+                var ly2 = y + r * Math.sin(-angle*Math.PI/180) * end_distance;
+
+                context.beginPath();
+                context.moveTo(lx, ly);
+                context.lineTo(lx2, ly2);
+                context.closePath();
+                context.stroke();
+            }
+            function fillSegment(start_angle, end_angle, start_distance, end_distance){
+                context.annulus(x, y,
+                                r*start_distance, r*end_distance,
+                                start_angle, end_angle,
+                                false);
+                context.fill();
+            }
+            function draw_hand(time_length, remain, divisions, color){
+                var r_d = r/MAX_DEPTH;
+                var t_d = 1;
+                var t_max = 86400000;
+                for(var d = 0; d<divisions.length; d++){
+                    context.beginPath();
+                    context.arc(x,y,r_d*(d+1),2*Math.PI/180, 0);
+                    context.closePath();
+                    context.stroke();
+                }
+                for(var d = 0; d<divisions.length; d++){
+                    var n = divisions[d];
+                    
+                    t_d = t_d*n;
+                    var a_n = 360/t_d;
+                    var offset = 270;
+                    context.fillStyle = color;
+                    var fill = -1;
+                    for(var i = 0; i<t_d; i++){
+                        //context.strokeStyle = color;
+                        drawLine((a_n*i)+offset, (1/MAX_DEPTH)*d, (1/MAX_DEPTH)*(d+1));
+                        if(millisecs%time_length>=i*(t_max/t_d/remain) && millisecs%time_length<(i+1)*(t_max/t_d/remain)){
+                            fill = i;
+                        }
+                    }
+                    
+                    if(fill > -1){
+                        fillSegment((a_n*fill)+offset, (a_n*(fill+1))+offset,  (1/MAX_DEPTH)*d, (1/MAX_DEPTH)*(d+1))
+                    }
+                }
+            }
+            context.lineWidth = 1;
+            var t_d = 1;
+            context.clearRect(0,0,WIDTH, WIDTH);
+            context.globalCompositeOperation = invert?"darken":"lighter";
+            context.lineWidth = 2;
+            context.strokeStyle = invert?"hsla(0, 0%, 0%,0.25)":"hsla(0,0%,100%, 0.25)";
+            draw_hand(24*60*60*1000, 1, hours, "hsla(240, 100%, 50%, 1)");
+            context.lineWidth = 2;
+            context.strokeStyle = invert?"hsla(0, 0%, 0%,0.5)":"hsla(0,0%,100%, 0.25)";
+            draw_hand(60*60*1000, 24, minutes, "hsla(0, 100%, 50%, 1)");
+            context.strokeStyle = invert?"hsl(0,0%,0%)":"hsl(0,0%,100%)";
+            draw_hand(60*1000, 24*60, seconds, "hsla(120, 100%, 50%, 1)");
+
+            if(animate){
+                window.requestAnimationFrame(function(){
+                    document.body.style.backgroundColor = invert?"white":"black";
+                    draw_clock(hours, minutes, seconds);
+                })
+            }
+        }
+        window.addEventListener("load" , function(){
+            document.body.appendChild(squareCircle);
+            draw_clock(clock.hours, clock.minutes, clock.seconds);
+        });
+        </script>
+    </head>
+    <body></body>
+</html>
