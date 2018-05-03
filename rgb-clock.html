@@ -100,15 +100,21 @@
                 context.fill();
             }
             function draw_hand(time_length, remain, divisions, color){
-                var r_d = r/MAX_DEPTH;
+                var r_d = r/2;
+                var r_s = r_d;
                 var t_d = 1;
                 var t_max = 86400000;
+                
                 for(var d = 0; d<divisions.length; d++){
                     context.beginPath();
-                    context.arc(x,y,r_d*(d+1),2*Math.PI/180, 0);
+                    context.arc(x,y,r_s,2*Math.PI/180, 0);
                     context.closePath();
                     context.stroke();
+                    r_d = (r_d/2);
+                    r_s = r_s+r_d;
                 }
+                r_d = r/2;
+                r_s = r_d;
                 for(var d = 0; d<divisions.length; d++){
                     var n = divisions[d];
                     
@@ -119,15 +125,17 @@
                     var fill = -1;
                     for(var i = 0; i<t_d; i++){
                         //context.strokeStyle = color;
-                        drawLine((a_n*i)+offset, (1/MAX_DEPTH)*d, (1/MAX_DEPTH)*(d+1));
+                        drawLine((a_n*i)+offset, (r_s-r_d)/r, r_s/r);
                         if(millisecs%time_length>=i*(t_max/t_d/remain) && millisecs%time_length<(i+1)*(t_max/t_d/remain)){
                             fill = i;
                         }
                     }
                     
                     if(fill > -1){
-                        fillSegment((a_n*fill)+offset, (a_n*(fill+1))+offset,  (1/MAX_DEPTH)*d, (1/MAX_DEPTH)*(d+1))
+                        fillSegment((a_n*fill)+offset, (a_n*(fill+1))+offset,  (r_s-r_d)/r, r_s/r)
                     }
+                    r_d = (r_d/2);
+                    r_s = r_s+r_d;
                 }
             }
             context.lineWidth = 1;
