@@ -136,12 +136,12 @@
             context.globalCompositeOperation = invert?"darken":"lighter";
             context.lineWidth = 2;
             context.strokeStyle = invert?"hsla(0, 0%, 0%,0.25)":"hsla(0,0%,100%, 0.25)";
-            draw_hand(24*60*60*1000, 1, hours, "hsla(240, 100%, 50%, 1)");
+            draw_hand(24*60*60*1000, 1, hours, "hsla(240, 75%, 50%, 1)");
             context.lineWidth = 2;
             context.strokeStyle = invert?"hsla(0, 0%, 0%,0.5)":"hsla(0,0%,100%, 0.25)";
-            draw_hand(60*60*1000, 24, minutes, "hsla(0, 100%, 50%, 1)");
+            draw_hand(60*60*1000, 24, minutes, "hsla(0, 75%, 50%, 1)");
             context.strokeStyle = invert?"hsl(0,0%,0%)":"hsl(0,0%,100%)";
-            draw_hand(60*1000, 24*60, seconds, "hsla(120, 100%, 50%, 1)");
+            draw_hand(60*1000, 24*60, seconds, "hsla(120, 75%, 50%, 1)");
 
             if(animate){
                 window.requestAnimationFrame(function(){
