@@ -1,0 +1,123 @@
+<html>
+    <head>
+        <title>Graphics</title>
+        <script type="text/javascript" src="lib/require.js"></script>
+        <style>
+            exec {
+                display: table;
+                padding: 10px;
+                margin: 0 4px 4px, 0;
+                background-color: hsla(0,0%, 50%,0.1);
+                font-family: 'Courier New', Courier, monospace;
+                line-height: 1.5;
+                white-space: pre;
+            }
+            var {
+                padding: 0 4px;
+                display: inline-block;
+                background-color: hsla(0,0%, 50%,0.1);
+                font-family: 'Courier New', Courier, monospace;
+            }
+            body{
+                font-family: sans-serif;
+                line-height: 1.25;
+                position: relative;
+                overflow: hidden;
+                width: auto;
+                height: auto;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 0;
+            }
+            #page{
+                position: absolute;
+                overflow: auto;
+                background-color: transparent;
+                padding: 20px;
+            }
+            body, #page{
+                width: auto;
+                height: auto;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+        </style>
+        <script type="text/javascript">
+            require("../graphics.js");
+        </script>
+    </head>
+    <body>
+        <div id="page">
+                <h1>Graphics Exploration</h1>
+                <h2>About Code Snippets</h2>
+                <p>There are code snippets throughout this page that can be executed by clicking on them.</p>
+                <p>There are also variables that can be clicked to show their value.</p>
+                <p>Code snippets are executed in the following way:</p>
+        <exec>var snippet = new Function("return 'Hello World';");
+        this.returned = snippet.call(window);</exec>
+                <p>This means that to set a variable of the global scope the code snippets can use the this variable or window variable.</p>
+                <p>For example: if you click on <var>this.returned</var> and <var>returned</var> they will tell you that the function returned <var>"Hello World"</var></p>
+                <p>Clicking on the following snippet will show an error message:</p>
+                <exec>throw new Error("Woo hoo an error!");</exec>
+                <h2>Let's get started...</h2>
+                <h3>Points</h3>
+                <p>When you create a Point you may pass in it's coordinates as an object or leave them empty.</p>
+                <exec>this.ThreeDimensional = new Point({x:0,y:0,z:0});</exec>
+                <exec>this.TwoDimensional = new Point({x:0,y:0});</exec>
+                <exec>this.OneDimensional = new Point({x:0});</exec>
+                <exec>this.Blank = new Point();</exec>
+                <exec>this.AlsoBlank = Point();</exec>
+                <p>All points have the `render` function which returns an array with the point as the only child.</p>
+                <p>Click on these to see the resulting arrays:</p>
+                <exec>ThreeDimensional.render()</exec>
+                <exec>TwoDimensional.render()</exec>
+                <exec>OneDimensional.render()</exec>
+                <exec>Blank.render()</exec>
+                <exec>AlsoBlank.render()</exec>
+                <h3>Shapes</h3>
+                <p>The <var>Shape</var> class extends the <var>Point</var> class.</p>
+                <p>That means Shapes have coordinates and a render function.</p>
+                <p>The render function of a Shape can return an array with multiple points in it.</p>
+                <p>When creating a new shape you can supply the shape's coordinates and the shape's constituants.</p>
+                <p>A shape can be made up of multiple other shapes or points.</p>
+                <p>For example, if we wanted a shape that mapped out the 4 corners of a square with points then we could use the following code to create it:</p>
+<exec>var points = [ Point({x:-50, y:-50}) , Point({x:50, y:-50}) , Point({x:50, y:50}) , Point({x:-50, y:50}) ];
+this.ASquare = Shape({x: 100, y: 100}, points);</exec>
+                <p>Check out the results from calling the `render` method of the shape</p>
+                <exec>ASquare.render()</exec>
+                <p>As you can see from the results, the points have been given positions relative to the Shape's position</p>
+                <h3>Selections</h3>
+                <p>You can make a selection of a Shape by creating a Selection object.</p>
+                <p>The <var>Selection</var> class extends the <var>Point</var> class.</p>
+                <p>This means that is can have coordinates assigned to it.</p>
+                <p>However these coordinates are special as they are conditions that determine whether a point will be kept in the selection or not.</p>
+                <p>For Example if we wanted to select only half of the corners of the square we could use the following Selection:</p>
+                <exec>this.TopLine = Selection({y: 50});</exec>
+                <exec>this.BottomLine = Selection({y: 150});</exec>
+                <exec>this.LeftLine = Selection({x: 50});</exec>
+                <exec>this.RightLine = Selection({x: 150});</exec>
+                <p>Check out the following results from the Selection's render method when we pass in our square:</p>
+                <exec>TopLine.render(ASquare)</exec>
+                <exec>BottomLine.render(ASquare)</exec>
+                <exec>LeftLine.render(ASquare)</exec>
+                <exec>RightLine.render(ASquare)</exec>
+                <p>You can see by the results that each render method is returning two points that form one of the outside lines of the square.</p>
+                <h3>Gradients</h3>
+                <p>You can use gradients to apply changes to multiple points.</p>
+                <p>For example, if we wanted to give all of our points in our square a `z` coordinate we can do it with the following gradient:</p>
+<exec>var addZ = function(points){ 
+    for(var i=0; i&lt;points.length; i++){
+        points[i].z = 100;
+    }
+    return points;
+};
+this.ZSquare = Gradient({}, ASquare, addZ);</exec>
+                <p>Now check out the points returned by the gradient's render function:</p>
+                <exec>ZSquare.render()</exec>
+        </div>
+    </body>
+</html>

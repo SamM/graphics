@@ -1,0 +1,165 @@
+<html>
+    <head>
+        <title>Drawing Shapes</title>
+        <script type="text/javascript" src="lib/require.js"></script>
+        <style>
+            exec {
+                display: table;
+                padding: 10px;
+                margin: 0 4px 4px, 0;
+                background-color: hsla(0,0%, 50%,0.1);
+                font-family: 'Courier New', Courier, monospace;
+                line-height: 1.5;
+                white-space: pre;
+                max-width: 500px;
+            }
+            exec:hover,var:hover{
+                background-color: hsla(0,0%, 50%,0.2);
+            }
+            var {
+                padding: 0 4px;
+                display: inline-block;
+                background-color: hsla(0,0%, 50%,0.1);
+                font-family: 'Courier New', Courier, monospace;
+            }
+            body{
+                font-family: sans-serif;
+                line-height: 1.25;
+                position: relative;
+                overflow: hidden;
+                width: auto;
+                height: auto;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 0;
+            }
+            #page{
+                position: absolute;
+                overflow: auto;
+                background-color: transparent;
+                padding: 20px;
+            }
+            body, #page{
+                width: auto;
+                height: auto;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+            #page{
+                left: 560px;
+            }
+            #screen{
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin: 20px;
+                border: 2px solid rgba(0,0,0,0.25);
+            }
+        </style>
+        <script type="text/javascript">
+            require("../graphics.js");
+        </script>
+    </head>
+    <body>
+        <div id="screen"></div>
+        <div id="page">
+                <h1>Drawing Shapes</h1>
+                <h2>About Code Snippets</h2>
+                <p>There are code snippets throughout this page that can be executed by clicking on them.</p>
+                <p>There are also variables that can be clicked to show their value.</p>
+                <p>Code snippets are executed in the following way:</p>
+        <exec>var snippet = new Function("return 'Hello World';");
+        this.returned = snippet.call(window);</exec>
+                <p>This means that to set a variable of the global scope the code snippets can use the this variable or window variable.</p>
+                <p>For example: if you click on <var>this.returned</var> and <var>returned</var> they will tell you that the function returned <var>"Hello World"</var></p>
+                <p>Clicking on the following snippet will show an error message:</p>
+                <exec>throw new Error("Woo hoo an error!");</exec>
+                <h2>Let's get started...</h2>
+                <h3>Creating a place to display drawings</h3>
+                <exec>this.ScreenContainer = document.getElementById("screen");</exec>
+<exec>this.ShowCanvas = function(canvas){
+    if(isElement(canvas)){
+        ScreenContainer.innerHTML = "";
+        ScreenContainer.appendChild(canvas);
+    }
+};</exec>
+                <h3>Making a New Drawing</h3>
+                <exec>this.View = Drawing(512,512);</exec>
+                <p>The following function can be used to render things to the board:</p>
+                <exec>this.Draw = function(shape){ShowCanvas(View.render(shape));};</exec>
+                <exec>Draw();</exec>
+                <h3>Drawing a Two Points</h3>
+                <p>Here we will make a shape that has two points in it and render it to screen:</p>
+<exec>var One = Point({x: -100, y: -100, g: 255});
+var Two = Point({x: 100, y: 100, z:100, r: 255, g: 255, radius: 2});
+this.TwoPoints = Shape({rz:0}, [One, Two]);</exec>
+                <exec>Draw(TwoPoints);</exec>
+                <h3>Drawing a Line</h3>
+                <p>Here we will draw a like between the two points we just made:</p>
+                <exec>Draw(Line({}, TwoPoints));</exec>
+                <h3>Drawing a the outline of a triangle</h3>
+                <p>Here we make the three points of a triangle</p>
+<exec>var radius = 2;
+var width = 256;
+var height = (Math.sqrt(3)/2)*width;
+var One = Point({x:0, y:-height/2, r: 255, z: 100, radius: radius});
+var Two = Point({x:width/2, y:height/2, g: 255, radius: radius});
+var Three = Point({x:-width/2, y:height/2, b:255, radius: radius});
+this.OneTriangle = Shape({}, [One, Two, Three])</exec>
+                <p>Now we can draw the outline of the triangle using the following code:</p>
+                <exec>Draw(Line({}, OneTriangle));</exec>
+                <h3>Filling the inside of the triangle</h3>
+                <p>We can use the following code to fill the triangle</p>
+                <exec>Draw(Fill({}, Line({}, OneTriangle)));</exec>
+                <h3>Drawing the Triangle and the Line</h3>
+                <exec>Draw(Shape({rz:0.25},[Fill({}, Line({}, OneTriangle)), Line({}, TwoPoints)]));</exec>
+                <h3>Drawing a Pyramid</h3>
+<exec>var radius = 2;
+var width = 250;
+var w = (Math.sqrt(3)/2)*width;
+var left = Point({x:0, y:0, r:255, z: 0, radius: radius});
+var top = Point({x:w, y:-width/2, g:255, z: 0, radius: radius});
+var bottom = Point({x:w, y:width/2, b:255, z: 0, radius: radius});
+var middle = Point({x:w/2, y:0, r:255, g:255, z: w, radius: radius});
+var lines = [
+    Line({},[left, top, bottom]), 
+    Line({},[left, middle]), 
+    Line({},[top, middle]), 
+    Line({},[bottom, middle])
+];
+this.OnePyramid = Shape({x: -w/2, z: -w/2, rz: 0.25}, lines)</exec>
+                <exec>Draw(OnePyramid);</exec>    
+                <h3>Animating Pyramid Rotation</h3>
+<exec>this.StopAnimation = false;
+this.Animate = function(start){
+    if(start===true) StopAnimation = false;
+    if(StopAnimation) return;
+    var attrs = View.attrs;
+    attrs.rx += 0.002;
+    attrs.ry += 0.004;
+    attrs.rz += 0.001;
+    Draw(AnimationShape);
+    window.requestAnimationFrame(Animate);
+};
+this.Pause = function(){StopAnimation = true;};</exec>
+                <p>You can choose which shape to animate using the following code snippets:</p>
+                <exec>this.AnimationShape = Line({}, TwoPoints);</exec>
+                <exec>this.AnimationShape = Line({}, OneTriangle);</exec>
+                <exec>this.AnimationShape = OnePyramid;</exec>
+                <p>Now you can start the animation using <var>Animate(true);</var> and pause it using <var>Pause();</var>.</p>
+                <h3>Reseting the view rotation</h3>
+<exec>this.ResetView = function(){
+    View.attrs.rx=0;
+    View.attrs.ry=0;
+    View.attrs.rz=0;
+    Draw(AnimationShape);
+};</exec>
+                <p>You can reset the view to the starting rotation using the following function:</p>
+                <exec>ResetView();</exec>
+            </div>
+    </body>
+</html>

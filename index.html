@@ -1,0 +1,115 @@
+<html>
+    <head>
+        <title>Graphics</title>
+        <script type="text/javascript" src="lib/require.js"></script>
+        <style>
+            exec {
+                display: table;
+                padding: 10px;
+                margin: 0 4px 4px, 0;
+                background-color: hsla(0,0%, 50%,0.1);
+                font-family: 'Courier New', Courier, monospace;
+                line-height: 1.5;
+                white-space: pre;
+            }
+            var {
+                padding: 0 4px;
+                display: inline-block;
+                background-color: hsla(0,0%, 50%,0.1);
+                font-family: 'Courier New', Courier, monospace;
+            }
+            exec:hover,var:hover{
+                background-color: hsla(0,0%, 50%,0.2);
+            }
+            body{
+                font-family: sans-serif;
+                line-height: 1.25;
+                position: relative;
+                overflow: hidden;
+                width: auto;
+                height: auto;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 20px;
+            }
+            #page{
+                position: absolute;
+                overflow: auto;
+                background-color: white;
+            }
+            body, #page{
+                width: auto;
+                height: auto;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Graphics Programming</h1>
+        <h2>About Code Snippets</h2>
+        <p>There are code snippets throughout this page that can be executed by clicking on them.</p>
+        <p>There are also variables that can be clicked to show their value.</p>
+        <p>Code snippets are executed in the following way:</p>
+<exec>var snippet = new Function("return 'Hello World';");
+this.returned = snippet.call(window);</exec>
+        <p>This means that to set a variable of the global scope the code snippets can use the this variable or window variable.</p>
+        <p>For example: if you click on <var>this.returned</var> and <var>returned</var> they will tell you that the function returned <var>"Hello World"</var></p>
+        <p>Clicking on the following snippet will show an error message:</p>
+        <exec>throw new Error("Woo hoo an error!");</exec>
+
+        <h2>Let's get started...</h2>
+
+        <h3>Creating an array</h3>
+        <exec>this.test = _("Hello", "World");</exec>
+        <br>
+        <exec>this.array = ["Hello", "World"];</exec>
+        <exec>this.test2 = _(array);</exec>
+
+        <h3>Getting the array</h3>
+        <exec>this.array1 = test();</exec>
+        <exec>this.array2 = test._;</exec>
+        <p><var>array1</var> and <var>array2</var> are the same variable.</p>
+        <p><var>array1 == array2</var> equals true</p>
+        <p>They both match <var>array</var>.</p>
+        <exec>this.array3 = test2();</exec>
+        <exec>this.array4 = test2._;</exec>
+        <p><var>array3</var> and <var>array4</var> are both the same variable as <var>array</var>.</p>
+        <p><var>array == array3 && array == array4</var> equals true</p>
+
+        <h3>Getting an item from an array</h3>
+        <exec>this.hello = test(0)();</exec>
+        <exec>this.world = test._[1];</exec>
+        <p><var>hello</var> equals <var>"Hello"</var>.</p>
+        <p><var>world</var> equals <var>"World"</var>.</p>
+        <p><var>test(0)()</var> returns the same as <var>test._[0]</var></p>
+        <p>Both are ways to return a variable from an array.</p>
+        <exec>this.world2 = test(-1)();</exec>
+        <p><var>world2</var> equals <var>"World"</var>.</p>
+        <p><var>world</var> and <var>world2</var> are the same variable.</p>
+        <p>Giving an index of -1 returns that last variable of the array.</p>
+
+        <h3>Setting an item in an array</h3>
+        <exec>this.test = _("Hello", "World");</exec>
+        <br>
+        <exec>test(0)("Hi");</exec>
+        <p><var>test()</var> equals <var>["Hi","World"]</var>.</p>
+        <exec>test._[1] = "Globe";</exec>
+        <p><var>test()</var> equals <var>["Hi","Globe"]</var>.</p>
+        
+        <h3>Setting variable from array to another value</h3>
+        <exec>this.numbers = _(1,2,3);</exec>
+        <p>This makes a new array. Now we can make a new array of the same elements using the following code:</p>
+        <exec>numbers(0,0,0,1,1,2, true);</exec>
+        <p>The numbers 0,0,0,1,1,2 are all indexes to items in the original array.</p>
+        <p><var>numbers()</var> now returns <var>[1,1,1,2,2,3]</var></p>
+        <p>You can create a brand new array of numbers using the following code:</p>
+        <exec>numbers(null)(3,4,5);</exec>
+        <p><var>numbers()</var> now returns <var>[3,4,5]</var></p>
+        <script type="text/javascript" src="index.js"></script>
+    </body>
+</html>

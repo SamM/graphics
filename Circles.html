@@ -1,0 +1,276 @@
+<html>
+    <head>
+        <title>Exploring Circles</title>
+        <script type="text/javascript" src="lib/require.js"></script>
+        <style>
+            exec {
+                display: table;
+                padding: 10px;
+                margin: 0 4px 4px, 0;
+                background-color: hsla(0,0%, 50%,0.1);
+                font-family: 'Courier New', Courier, monospace;
+                line-height: 1.5;
+                white-space: pre;
+            }
+            var {
+                padding: 0 4px;
+                display: inline-block;
+                background-color: hsla(0,0%, 50%,0.1);
+                font-family: 'Courier New', Courier, monospace;
+            }
+            exec:hover,var:hover{
+                background-color: hsla(0,0%, 50%,0.2);
+            }
+            body{
+                font-family: sans-serif;
+                line-height: 1.25;
+                position: relative;
+                overflow: hidden;
+                width: auto;
+                height: auto;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                padding: 0;
+            }
+            #page{
+                position: absolute;
+                overflow: auto;
+                background-color: transparent;
+                padding: 20px;
+            }
+            body, #page{
+                width: 100%;
+                height: 100%;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+            #page{
+                left: 560px;
+            }
+            #screen{
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin: 20px;
+                border: 2px solid rgba(0,0,0,0.25);
+            }
+        </style>
+        <script type="text/javascript">
+            require("../graphics.js");
+        </script>
+    </head>
+    <body>
+        <div id="screen"></div>
+        <div id="page">
+                <h1>Circles Exploration</h1>
+                <h2>About Code Snippets</h2>
+                <p>There are code snippets throughout this page that can be executed by clicking on them.</p>
+                <p>There are also variables that can be clicked to show their value.</p>
+                <p>Code snippets are executed in the following way:</p>
+        <exec>var snippet = new Function("return 'Hello World';");
+        this.returned = snippet.call(window);</exec>
+                <p>This means that to set a variable of the global scope the code snippets can use the this variable or window variable.</p>
+                <p>For example: if you click on <var>this.returned</var> and <var>returned</var> they will tell you that the function returned <var>"Hello World"</var></p>
+                <p>Clicking on the following snippet will show an error message:</p>
+                <exec>throw new Error("Woo hoo an error!");</exec>
+                <h2>Let's get started...</h2>
+                <h3>Creating a canvases to draw on to:</h3>
+
+                <exec>this.FirstCanvas = Canvas(512,512,"first");</exec>
+                <exec>this.CircleCanvas = Canvas(512,512,"circle");</exec>
+                <exec>this.ScaledCirclesCanvas = Canvas(512,512,"scaled-circles");</exec>
+                <exec>this.SphereCanvas = Canvas(512,512,"sphere");</exec>
+                <exec>this.RandomSphereCanvas = Canvas(512,512,"random-sphere");</exec>
+                <exec>this.RandomRingCanvas = Canvas(512,512,"random-ring");</exec>
+                <exec>this.ConcentricRingsCanvas = Canvas(512,512,"concentric-rings");</exec>
+                <exec>this.RandomCirclesCanvas = Canvas(512,512,"random-circles");</exec>
+
+                <h3>Creating a Screen that can show canvases</h3>
+                <exec>this.ScreenContainer = document.getElementById("screen");</exec>
+<exec>this.ShowCanvas = function(canvas){
+    if(isElement(canvas)){
+        ScreenContainer.innerHTML = "";
+        ScreenContainer.appendChild(canvas);
+    }
+}</exec>
+                <p>Use the following functions to flick between the different canvas we create on this page:</p>
+                <exec>ShowCanvas(FirstCanvas);</exec> 
+                <exec>ShowCanvas(CircleCanvas);</exec> 
+                <exec>ShowCanvas(ScaledCirclesCanvas);</exec> 
+                <exec>ShowCanvas(SphereCanvas);</exec> 
+                <exec>ShowCanvas(RandomSphereCanvas);</exec> 
+                <exec>ShowCanvas(RandomRingCanvas);</exec>
+                <exec>ShowCanvas(ConcentricRingsCanvas);</exec>
+                <exec>ShowCanvas(RandomCirclesCanvas);</exec>
+
+                <h3>Clearing A Canvas</h3>
+<exec>this.ClearCanvas = function(canvas){
+    if(isElement(canvas)){
+        canvas.getContext('2d').clearRect(0,0,canvas.width, canvas.height);
+    }
+    return canvas;
+}</exec>
+                <p>Use the following functions to clear one of the canvases:</p>
+                <exec>ClearCanvas(FirstCanvas);</exec> 
+                <exec>ClearCanvas(CircleCanvas);</exec> 
+                <exec>ShowCanvas(ScaledCirclesCanvas);</exec> 
+                <exec>ShowCanvas(SphereCanvas);</exec> 
+                <exec>ClearCanvas(RandomSphereCanvas);</exec> 
+                <exec>ClearCanvas(RandomRingCanvas);</exec>
+                <exec>ClearCanvas(ConcentricRingsCanvas);</exec>
+                <exec>ClearCanvas(RandomCirclesCanvas);</exec>
+
+                <h2>Drawing To The Canvases</h2>
+                <h3>Drawing a Circle</h3>
+
+<exec>this.DrawCircle = function(canvas, x,y,r,fillColor,strokeColor){
+    var context = canvas.getContext("2d");
+    context.save();
+    context.translate(512/2, 512/2);
+    context.beginPath();
+    context.arc(typeof x == "number"?x:0, typeof y == "number"?y:0, typeof r == "number"?r:0, 0,  2 * Math.PI);
+    context.closePath();
+    if(typeof fillColor == "string"){
+        context.fillStyle = fillColor;
+        context.fill();
+    }
+    if(typeof strokeColor == "string"){
+        context.strokeStyle = strokeColor;
+        context.stroke();
+    }
+    context.restore();
+};</exec>
+                <p>Now you can draw circles to the canvas by clicking on the following code snippets:</p>
+                <exec>ShowCanvas(CircleCanvas); DrawCircle(CircleCanvas, 0,0,250,false,"black");</exec>
+
+                <h3>Drawing a Scaled/Rotated Circle</h3>
+<exec>this.DrawScaledCircle = function(canvas, sx,sy,x,y,r,fillColor,strokeColor){
+    var context = canvas.getContext("2d");
+    context.save();
+    context.translate(512/2, 512/2);
+    context.transform(typeof sx=="number"?sx==0?1:sx:1, 0, 0, typeof sy=="number"?sy==0?1:sy:1, 0, 0);
+    context.beginPath();
+    if(typeof sx == "number" &amp;&amp; sx == 0){
+        if(typeof sy == "number" &amp;&amp; sy == 0){
+            context.moveTo(0,0);
+            context.lineTo(0,0);
+        }else{
+            context.moveTo(0,-r);
+            context.lineTo(0,r);
+            context.lineWidth = context.lineWidth/4;
+        }
+    }else if(typeof sy == "number" &amp;&amp; sy == 0){
+        context.moveTo(-r,0);
+        context.lineTo(r,0);
+        context.lineWidth = context.lineWidth/4;
+    }else{
+        context.arc(typeof x == "number"?x:0, typeof y == "number"?y:0, typeof r == "number"?r:0, 0,  2 * Math.PI);
+    }
+    context.closePath();
+    if(typeof fillColor == "string"){
+        context.fillStyle = fillColor;
+        context.fill();
+    }
+    if(typeof strokeColor == "string"){
+        context.strokeStyle = strokeColor;
+        context.stroke();
+    }
+    context.restore();
+};</exec>
+<exec>this.DrawScaledCircles = function(canvas, circles,x,y,r,fillColor,strokeColor){
+    for(var i=0; i&lt;=circles; i++){
+        DrawScaledCircle(canvas, i==0?0:i/circles,1,x,y,r,fillColor,strokeColor);
+    }
+};</exec>
+                <p>Now you can draw a scaled circle to the canvas by clicking on the following code snippets:</p>
+                <exec>ShowCanvas(CircleCanvas); DrawScaledCircles(ScaledCirclesCanvas, 36,0,0,250,false,"black");</exec>
+                
+                <h3>Mapping a Sphere</h3>
+<exec>this.DrawSphere = function(r, segments, lineColor){
+    for(var i=0; i&lt;=segments; i++){
+        DrawScaledCircle(SphereCanvas,i/segments,1,0,0,r,false,lineColor?lineColor:"black");
+        DrawScaledCircle(SphereCanvas,1,i/segments,0,0,r,false,lineColor?lineColor:"black");
+    }
+};</exec>
+                <p>Now we can draw the sphere by using the following code:</p>
+                <exec>ShowCanvas(SphereCanvas); DrawSphere(250, 16, "black");</exec>
+                <exec>ShowCanvas(SphereCanvas); DrawSphere(250, 8, "black");</exec>
+                <exec>ShowCanvas(SphereCanvas); DrawSphere(250, 4, "black");</exec>
+                <exec>ShowCanvas(SphereCanvas); DrawSphere(250, 2, "black");</exec>
+                <h3>Rotating and scaling the circles</h3>
+                <p>We can use the following function to draw a circle that is scaled and rotated:</p>
+<exec>this.DrawRotatedScaledCircle = function(canvas, rot,sx,sy,x,y,r,fillColor,strokeColor){
+    var context = canvas.getContext("2d");
+    context.save();
+    context.translate(512/2, 512/2);
+    context.rotate(rot* Math.PI / 180);
+    context.transform(typeof sx=="number"?sx:1, 0, 0, typeof sy=="number"?sy:1, 0, 0);
+    context.beginPath();
+    context.arc(typeof x == "number"?x:0, typeof y == "number"?y:0, typeof r == "number"?r:0, 0,  2 * Math.PI);
+    context.closePath();
+    if(typeof fillColor == "string"){
+        context.fillStyle = fillColor;
+        context.fill();
+    }
+    if(typeof strokeColor == "string"){
+        context.strokeStyle = strokeColor;
+        context.stroke();
+    }
+    context.restore();
+};</exec>
+<h3>Drawing a sphere out of randomly scaled and rotated circles</h3>
+<p>Let's draw a new type of sphere with random values for scale and rotation.</p>
+<exec>this.DrawRandomSphere = function(canvas, r, num_circles, lineColor){
+    DrawCircle(canvas, 0, 0, r, false, lineColor);
+    for(var i=0; i&lt;num_circles; i++){
+        DrawRotatedScaledCircle(canvas, Math.random()*360, Math.random(),1,0,0,r,false,lineColor);
+    }
+}
+</exec>
+                <p>We can draw a random sphere to the canvas using the following code:</p>
+                <exec>ShowCanvas(RandomSphereCanvas); DrawRandomSphere(RandomSphereCanvas, 250, 50, "rgba(0,0,0,0.5)");</exec>
+                
+                <h3>Drawing a ring using a similar function</h3>
+
+                <p>Let's draw a new type of sphere with random values for scale and rotation.</p>
+                <exec>this.DrawRandomRing = function(canvas, minR, maxR, r, num_circles, lineColor){
+                    DrawCircle(canvas, 0, 0, r, false, lineColor);
+                    var minS = minR/r;
+                    var maxS = maxR/r;
+                    var s;
+                    for(var i=0; i&lt;num_circles; i++){
+                        s = minR==0?maxS*Math.random():minS+(Math.random()*(1-minS-(1-maxS)));
+                        DrawRotatedScaledCircle(canvas, Math.random()*360, s,1,0,0,r,false,lineColor);
+                    }
+                }
+                </exec>
+        <p>We can draw a random sphere to the canvas using the following code:</p>
+        <exec>ShowCanvas(RandomRingCanvas); DrawRandomRing(RandomRingCanvas, 100, 100, 250, 50, "rgba(0,0,0,0.5)");</exec>
+        <h3>Concentric Rings</h3>
+        <p>The next image we are going to make is of concentric rings using the DrawRandomRing function</p>
+<exec>this.DrawConcentricRings = function(canvas, minR, maxR, rings, circles, lineColor){
+    var ringR = (maxR - minR)/rings;
+    for(var i=0; i&lt;rings; i++){
+        DrawRandomRing(canvas, i==0?Math.max(1,minR):minR+(i*ringR), i==0?Math.max(1,minR):minR+(i*ringR), i==0?minR+ringR:minR+(ringR*(i+1)), circles, lineColor);
+    }
+};</exec>
+<p>Now we can draw the pattern using the following function:</p>
+<exec>ShowCanvas(ConcentricRingsCanvas); DrawConcentricRings(ConcentricRingsCanvas, 50, 250, 4, 50, "rgba(0,0,0,0.5)")</exec>
+<h3>Random Centered Circles</h3>
+<exec>this.DrawRandomCircle = function(canvas, maxR, lineColor){
+    DrawRotatedScaledCircle(canvas, Math.random()*360, Math.random(), 1, 0, 0, Math.random()*maxR, false, lineColor);
+};</exec>
+<exec>this.DrawRandomCircles = function(canvas, num_circles, maxR, lineColor){
+    for(var i=0; i&lt;num_circles; i++){
+        DrawRandomCircle(canvas, maxR, lineColor);
+    }
+};</exec>
+    <p>The following code will draw 100 random circles to the canvas</p>
+    <exec>ShowCanvas(RandomCirclesCanvas); DrawRandomCircles(RandomCirclesCanvas, 50, 250, "rgba(0,0,0,0.5)");</exec>
+</div>
+    </body>
+</html>
