@@ -118,10 +118,13 @@ else throw new Error("Sorry, this browser doesn't support WebGL :(");</exec>
                 <h2>Drawing Some Shapes</h2>
                 <p>Now we will make some shapes to draw to the canvas using WebGL:</p>
                 <h3>Creating a Triangle</h3>
-                <exec>var center = Point();
-var width = 1;
+                <exec>var width = 1;
 var height = (Math.sqrt(3)/2)*width;
-this.ATriangle = new Shape({}, [center.moved(0, -height/2, 0).colored(255), center.moved(width/2, height/2, 0).colored(false,255), center.moved(-width/2, height/2, 0).colored(false, false, 255)]);</exec>
+this.ATriangle = World();
+var top = Point({y: -height/2, r:255}, ATriangle);
+var left = Point({x: width/2, y: height/2, g: 255}, ATriangle).unite(top);
+var right = Point({x: -width/2, y: height/2, b: 255}, ATriangle).unite(top);
+ATriangle.triangle(top, left, right);</exec>
         
                 <p>You can use the following functions to draw the triangle to the canvas:</p>
                 <exec>GL.clear().drawPoints(ATriangle, View);</exec>
@@ -129,15 +132,14 @@ this.ATriangle = new Shape({}, [center.moved(0, -height/2, 0).colored(255), cent
                 <exec>GL.clear().drawTriangles(ATriangle, View);</exec>
 
                 <h3>Creating a Pyramid</h3>
-                <exec>var center = Point();
-var width = 1;
+                <exec>var width = 1;
 var height = (Math.sqrt(3)/2)*width;
-var middle = center.moved(0, 0, -height).colored(255,255);
-var top = center.moved(0, -height/2, 0).colored(255);
-var left = center.moved(width/2, height/2, 0).colored(false,255);
-var right = center.moved(-width/2, height/2, 0).colored(false, false, 255);
-this.APyramid = new Shape({}, [top,left,right, middle,top,left, middle,top,right, middle,left,right]);</exec>
-        
+this.APyramid = World();
+var middle = Point({z:-height, r:255, g:255}, APyramid);
+var top = Point({}, APyramid).moveBy(0, -height/2, 0).colorTo(255).unite(middle);
+var left = Point({}, APyramid).moveBy(width/2, height/2, 0).colorTo(0, 255).unite(middle);
+var right = Point({}, APyramid).moveBy(-width/2, height/2, 0).colorTo(0, 0, 255).unite(middle);
+APyramid.triangle(top, left, middle).triangle(left, right, middle).triangle(top, right, middle).triangle(top, left, right);</exec>
                 <p>You can use the following functions to draw the triangle to the canvas:</p>
                 <exec>GL.clear().drawPoints(APyramid, View);</exec>
                 <exec>GL.clear().drawLineLoop(APyramid, View);</exec>

@@ -3,7 +3,8 @@ var requirements = [
     "graphics/Point.js", "graphics/Shape.js", 
     "graphics/Gradient.js", "graphics/Selection.js",
     "graphics/Canvas.js", "graphics/Drawing.js",
-    "graphics/Line.js", "graphics/Fill.js", "graphics/WebGL.js"
+    "graphics/Line.js", "graphics/Fill.js", "graphics/Union.js",
+    "graphics/World.js", "graphics/WebGL.js"
 ];
 require(requirements);
 require.onDone = function(loaded){
